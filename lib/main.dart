@@ -14,13 +14,9 @@ class FinalProject extends StatelessWidget {
   }
 }
 
-class BowlingScorecard extends StatefulWidget {
-  @override
-  _BowlingScorecardState createState() => _BowlingScorecardState();
-}
-
-class _BowlingScorecardState extends State<BowlingScorecard> {
-  final List<List<TextEditingController>> scoreControllers = List.generate(
+class BowlingScoreModel {
+  // List of controllers for each frame and ball input (Frame 10 has 3 balls)
+  List<List<TextEditingController>> scoreControllers = List.generate(
     9,
     (_) => [TextEditingController(), TextEditingController()],
   )..add([
@@ -29,19 +25,52 @@ class _BowlingScorecardState extends State<BowlingScorecard> {
     TextEditingController(),
   ]); // Frame 10 has 3 inputs
 
+  // List of scores for each frame
   List<int> scores = List.generate(10, (_) => 0);
 
-  void _updateScore(int frameIndex) {
+  // Update the score for the given frame based on user input
+  void updateScore(int frameIndex) {
     int ball1 = int.tryParse(scoreControllers[frameIndex][0].text) ?? 0;
     int ball2 = int.tryParse(scoreControllers[frameIndex][1].text) ?? 0;
     int ball3 =
         frameIndex == 9 ? (int.tryParse(scoreControllers[9][2].text) ?? 0) : 0;
 
-    // Simple score calculation, replace this with actual scoring rules for strikes and spares
+    // Simple score calculation; replace this with actual scoring rules for strikes/spares
     int score = ball1 + ball2 + ball3;
-    setState(() {
-      scores[frameIndex] = score;
-    });
+    scores[frameIndex] = score;
+  }
+}
+
+class BowlingScoreController {
+  final BowlingScoreModel model;
+  final Function updateUI;
+
+  BowlingScoreController(this.model, this.updateUI);
+
+  // Handle when input is changed in a text field
+  void onBallInputChanged(int frameIndex) {
+    model.updateScore(frameIndex);
+    updateUI();
+  }
+}
+
+class BowlingScorecard extends StatefulWidget {
+  @override
+  _BowlingScorecardState createState() => _BowlingScorecardState();
+}
+
+class _BowlingScorecardState extends State<BowlingScorecard> {
+  final BowlingScoreModel model = BowlingScoreModel();
+  late BowlingScoreController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = BowlingScoreController(model, _updateUI);
+  }
+
+  void _updateUI() {
+    setState(() {});
   }
 
   @override
@@ -71,19 +100,19 @@ class _BowlingScorecardState extends State<BowlingScorecard> {
                         Row(
                           children: [
                             _buildTextField(
-                              scoreControllers[index][0],
+                              model.scoreControllers[index][0],
                               "Ball 1",
                               index,
                             ),
                             _buildTextField(
-                              scoreControllers[index][1],
+                              model.scoreControllers[index][1],
                               "Ball 2",
                               index,
                             ),
                           ],
                         ),
                         Text(
-                          "Score: ${scores[index]}",
+                          "Score: ${model.scores[index]}",
                           style: TextStyle(fontSize: 16),
                         ),
                       ],
@@ -110,19 +139,19 @@ class _BowlingScorecardState extends State<BowlingScorecard> {
                         Row(
                           children: [
                             _buildTextField(
-                              scoreControllers[index + 5][0],
+                              model.scoreControllers[index + 5][0],
                               "Ball 1",
                               index + 5,
                             ),
                             _buildTextField(
-                              scoreControllers[index + 5][1],
+                              model.scoreControllers[index + 5][1],
                               "Ball 2",
                               index + 5,
                             ),
                             if (index == 4) ...[
                               // Frame 10
                               _buildTextField(
-                                scoreControllers[9][2],
+                                model.scoreControllers[9][2],
                                 "Ball 3",
                                 9,
                               ),
@@ -130,7 +159,7 @@ class _BowlingScorecardState extends State<BowlingScorecard> {
                           ],
                         ),
                         Text(
-                          "Score: ${scores[index + 5]}",
+                          "Score: ${model.scores[index + 5]}",
                           style: TextStyle(fontSize: 16),
                         ),
                       ],
@@ -145,22 +174,25 @@ class _BowlingScorecardState extends State<BowlingScorecard> {
     );
   }
 
+  // TextField widget to take user input for a given ball in a frame
   Widget _buildTextField(
-    TextEditingController controller,
+    TextEditingController textEditingController,
     String hint,
     int frameIndex,
   ) {
     return Container(
       width: 50,
       child: TextField(
-        controller: controller,
+        controller: textEditingController,
         keyboardType: TextInputType.number,
         decoration: InputDecoration(
           hintText: hint,
           border: OutlineInputBorder(),
         ),
         onChanged: (value) {
-          _updateScore(frameIndex);
+          controller.onBallInputChanged(
+            frameIndex,
+          ); // Update the score when input changes
         },
       ),
     );
