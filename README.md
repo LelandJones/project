@@ -1,16 +1,14 @@
-# cs386final
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```mermaid
+flowchart TD
+    A[Start updateScore] --> B[Get ball1 text]
+    B --> C[Convert ball1 to int or zero]
+    C --> D[Get ball2 text]
+    D --> E[Convert ball2 to int or zero]
+    E --> F{Is frameIndex 9}
+    F -- Yes --> G[Get ball3 text]
+    G --> H[Convert ball3 to int or zero]
+    H --> J[Add ball1 ball2 ball3]
+    F -- No --> I[Set ball3 to zero]
+    I --> J
+    J --> K[Set score at frameIndex]
+    K --> L[End updateScore]
