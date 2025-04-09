@@ -9,7 +9,7 @@ class FinalProject extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: BowlingScorecard(),
+      home: BowlingScoreView(),
     );
   }
 }
@@ -27,18 +27,6 @@ class BowlingScoreModel {
 
   // List of scores for each frame
   List<int> scores = List.generate(10, (_) => 0);
-
-  // Update the score for the given frame based on user input
-  void updateScore(int frameIndex) {
-    int ball1 = int.tryParse(scoreControllers[frameIndex][0].text) ?? 0;
-    int ball2 = int.tryParse(scoreControllers[frameIndex][1].text) ?? 0;
-    int ball3 =
-        frameIndex == 9 ? (int.tryParse(scoreControllers[9][2].text) ?? 0) : 0;
-
-    // Simple score calculation; replace this with actual scoring rules for strikes/spares
-    int score = ball1 + ball2 + ball3;
-    scores[frameIndex] = score;
-  }
 }
 
 class BowlingScoreController {
@@ -46,20 +34,16 @@ class BowlingScoreController {
   final Function updateUI;
 
   BowlingScoreController(this.model, this.updateUI);
-
-  // Handle when input is changed in a text field
-  void onBallInputChanged(int frameIndex) {
-    model.updateScore(frameIndex);
-    updateUI();
-  }
 }
 
-class BowlingScorecard extends StatefulWidget {
+// View Class
+
+class BowlingScoreView extends StatefulWidget {
   @override
-  _BowlingScorecardState createState() => _BowlingScorecardState();
+  _BowlingScoreViewState createState() => _BowlingScoreViewState();
 }
 
-class _BowlingScorecardState extends State<BowlingScorecard> {
+class _BowlingScoreViewState extends State<BowlingScoreView> {
   final BowlingScoreModel model = BowlingScoreModel();
   late BowlingScoreController controller;
 
