@@ -49,7 +49,6 @@ class BowlingScoreModel {
 
   int get totalScore => scores.reduce((a, b) => a + b);
 
-  // ---------- Helpers ----------
   int _getRoll(int frame, int roll) {
     if (frame >= scoreControllers.length) return 0;
     if (roll >= scoreControllers[frame].length) return 0;
@@ -73,15 +72,19 @@ class BowlingScoreModel {
     return nextRoll1 + nextRoll2;
   }
 
-  bool shouldEnableSecondBall(int frameIndex) {
+  bool enableSecondBall(int frameIndex) {
     if (frameIndex >= 9) return true;
     String firstInput = scoreControllers[frameIndex][0].text;
     return firstInput.isNotEmpty && int.tryParse(firstInput) != 10;
   }
 
-  bool shouldEnableTenthFrameThirdBall() {
+  bool tenthFrameThirdBall() {
+    String secondText = scoreControllers[9][1].text;
+    if (secondText.isEmpty) return false;
+
     int first = _getRoll(9, 0);
     int second = _getRoll(9, 1);
+
     return (first == 10 && second == 10) || (first + second == 10);
   }
 }
@@ -93,7 +96,7 @@ class BowlingScoreController {
 
   BowlingScoreController(this.model, this.updateUI);
 
-  void onBallInputChanged(int frameIndex) {
+  void ballInputChanged(int frameIndex) {
     model.calculateScores();
     updateUI();
   }
@@ -154,7 +157,7 @@ class _BowlingScoreViewState extends State<BowlingScoreView> {
                               model.scoreControllers[index][1],
                               "B2",
                               index,
-                              enabled: model.shouldEnableSecondBall(index),
+                              enabled: model.enableSecondBall(index),
                             ),
                           ],
                         ),
@@ -191,15 +194,14 @@ class _BowlingScoreViewState extends State<BowlingScoreView> {
                               model.scoreControllers[frameIndex][1],
                               "B2",
                               frameIndex,
-                              enabled: model.shouldEnableSecondBall(frameIndex),
+                              enabled: model.enableSecondBall(frameIndex),
                             ),
                             if (index == 4)
                               _buildTextField(
                                 model.scoreControllers[9][2],
                                 "B3",
                                 9,
-                                enabled:
-                                    model.shouldEnableTenthFrameThirdBall(),
+                                enabled: model.tenthFrameThirdBall(),
                               ),
                           ],
                         ),
@@ -236,7 +238,7 @@ class _BowlingScoreViewState extends State<BowlingScoreView> {
           border: OutlineInputBorder(),
           contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         ),
-        onChanged: (_) => this.controller.onBallInputChanged(frameIndex),
+        onChanged: (_) => this.controller.ballInputChanged(frameIndex),
       ),
     );
   }
