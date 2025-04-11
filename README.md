@@ -9,5 +9,5 @@ classDiagram
         -int _getRoll(int frame, int roll)
         -int _strikeBonus(int frame)
         +bool enableSecondBall(int frameIndex)
-        +bool enableTenthFrameThirdBall()
+        +bool tenthFrameThirdBall()
     }
