@@ -73,8 +73,12 @@ class BowlingScoreModel {
   }
 
   bool enableSecondBall(int frameIndex) {
-    if (frameIndex >= 9) return true;
     String firstInput = scoreControllers[frameIndex][0].text;
+
+    if (frameIndex == 9) {
+      return firstInput.isNotEmpty;
+    }
+
     return firstInput.isNotEmpty && int.tryParse(firstInput) != 10;
   }
 
