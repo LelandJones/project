@@ -47,6 +47,15 @@ class BowlingScoreModel {
     }
   }
 
+  void resetGame() {
+    for (var controllerList in scoreControllers) {
+      for (var controller in controllerList) {
+        controller.clear();
+      }
+    }
+    scores.fillRange(0, 10, 0);
+  }
+
   int get totalScore => scores.reduce((a, b) => a + b);
 
   int _getRoll(int frame, int roll) {
@@ -102,6 +111,11 @@ class BowlingScoreController {
 
   void ballInputChanged(int frameIndex) {
     model.calculateScores();
+    updateUI();
+  }
+
+  void resetPressed() {
+    model.resetGame();
     updateUI();
   }
 }
@@ -217,6 +231,14 @@ class _BowlingScoreViewState extends State<BowlingScoreView> {
               Text(
                 "Total Score: ${model.totalScore}",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              ElevatedButton(
+                onPressed: controller.resetPressed,
+                child: Text("Reset"),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  textStyle: TextStyle(fontSize: 18),
+                ),
               ),
             ],
           ),
