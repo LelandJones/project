@@ -98,7 +98,9 @@ class BowlingScoreModel {
     int first = _getRoll(9, 0);
     int second = _getRoll(9, 1);
 
-    return (first == 10 && second == 10) || (first + second == 10);
+    // Enable third ball if the first ball is a strike,
+    // or the second ball is a strike (regardless of the first ball).
+    return (first == 10) || (second == 10) || (first + second == 10);
   }
 }
 
@@ -143,7 +145,11 @@ class _BowlingScoreViewState extends State<BowlingScoreView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Bowling Scorecard')),
+      appBar: AppBar(
+        title: Text('🎳 Bowling Scorecard'),
+        centerTitle: true,
+        backgroundColor: Colors.orange,
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -155,31 +161,39 @@ class _BowlingScoreViewState extends State<BowlingScoreView> {
                 children: List.generate(5, (index) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Column(
-                      children: [
-                        Text(
-                          "Frame ${index + 1}",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Row(
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      margin: EdgeInsets.all(6),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
                           children: [
-                            _buildTextField(
-                              model.scoreControllers[index][0],
-                              "B1",
-                              index,
+                            Text(
+                              "Frame ${index + 1}",
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            _buildTextField(
-                              model.scoreControllers[index][1],
-                              "B2",
-                              index,
-                              enabled: model.enableSecondBall(index),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _buildTextField(
+                                  model.scoreControllers[index][0],
+                                  "B1",
+                                  index,
+                                ),
+                                _buildTextField(
+                                  model.scoreControllers[index][1],
+                                  "B2",
+                                  index,
+                                  enabled: model.enableSecondBall(index),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
+                      ),
                     ),
                   );
                 }),
@@ -192,54 +206,70 @@ class _BowlingScoreViewState extends State<BowlingScoreView> {
                   int frameIndex = index + 5;
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Column(
-                      children: [
-                        Text(
-                          "Frame ${frameIndex + 1}",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Row(
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      margin: EdgeInsets.all(6),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
                           children: [
-                            _buildTextField(
-                              model.scoreControllers[frameIndex][0],
-                              "B1",
-                              frameIndex,
+                            Text(
+                              "Frame ${frameIndex + 1}",
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            _buildTextField(
-                              model.scoreControllers[frameIndex][1],
-                              "B2",
-                              frameIndex,
-                              enabled: model.enableSecondBall(frameIndex),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _buildTextField(
+                                  model.scoreControllers[frameIndex][0],
+                                  "B1",
+                                  frameIndex,
+                                ),
+                                _buildTextField(
+                                  model.scoreControllers[frameIndex][1],
+                                  "B2",
+                                  frameIndex,
+                                  enabled: model.enableSecondBall(frameIndex),
+                                ),
+                                if (index == 4)
+                                  _buildTextField(
+                                    model.scoreControllers[9][2],
+                                    "B3",
+                                    9,
+                                    enabled: model.tenthFrameThirdBall(),
+                                  ),
+                              ],
                             ),
-                            if (index == 4)
-                              _buildTextField(
-                                model.scoreControllers[9][2],
-                                "B3",
-                                9,
-                                enabled: model.tenthFrameThirdBall(),
-                              ),
                           ],
                         ),
-                      ],
+                      ),
                     ),
                   );
                 }),
               ),
+              SizedBox(height: 20),
+              Divider(thickness: 2),
+              SizedBox(height: 10),
               Text(
                 "Total Score: ${model.totalScore}",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              ElevatedButton(
+              SizedBox(height: 20),
+              ElevatedButton.icon(
                 onPressed: controller.resetPressed,
-                child: Text("Reset"),
+                icon: Icon(Icons.refresh),
+                label: Text("Reset"),
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  backgroundColor: Colors.redAccent,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   textStyle: TextStyle(fontSize: 18),
                 ),
               ),
+              SizedBox(height: 20),
             ],
           ),
         ),
@@ -261,7 +291,9 @@ class _BowlingScoreViewState extends State<BowlingScoreView> {
         keyboardType: TextInputType.number,
         decoration: InputDecoration(
           hintText: hint,
-          border: OutlineInputBorder(),
+          filled: true,
+          fillColor: enabled ? Colors.white : Colors.grey[300],
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         ),
         onChanged: (_) => this.controller.ballInputChanged(frameIndex),
