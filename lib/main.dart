@@ -26,9 +26,11 @@ class BowlingScoreModel {
   ]);
 
   List<int> scores = List.generate(10, (_) => 0);
+  String errorMessage = '';
 
   void calculateScores() {
     scores = List.generate(10, (_) => 0);
+    errorMessage = ''; // Reset error message on score calculation.
 
     for (int i = 0; i < 10; i++) {
       int first = _getRoll(i, 0);
@@ -54,6 +56,7 @@ class BowlingScoreModel {
       }
     }
     scores.fillRange(0, 10, 0);
+    errorMessage = ''; // Clear error message
   }
 
   int get totalScore => scores.reduce((a, b) => a + b);
@@ -84,11 +87,16 @@ class BowlingScoreModel {
   bool enableSecondBall(int frameIndex) {
     String firstInput = scoreControllers[frameIndex][0].text;
 
+    // For the 10th frame, we always allow input on the second ball.
     if (frameIndex == 9) {
       return firstInput.isNotEmpty;
     }
 
-    return firstInput.isNotEmpty && int.tryParse(firstInput) != 10;
+    int first = _getRoll(frameIndex, 0);
+    int second = _getRoll(frameIndex, 1);
+
+    // Enable second ball only if the first ball isn't a strike and their sum is <= 10
+    return first != 10 && first + second <= 10;
   }
 
   bool tenthFrameThirdBall() {
@@ -102,6 +110,41 @@ class BowlingScoreModel {
     // or the second ball is a strike (regardless of the first ball).
     return (first == 10) || (second == 10) || (first + second == 10);
   }
+
+  void checkFrameTotal(int frameIndex) {
+    String firstInput = scoreControllers[frameIndex][0].text;
+    String secondInput = scoreControllers[frameIndex][1].text;
+    String thirdInput = scoreControllers[frameIndex][2].text;
+
+    int firstBall = int.tryParse(firstInput) ?? 0;
+    int secondBall = int.tryParse(secondInput) ?? 0;
+    int thridBall = int.tryParse(thirdInput) ?? 0;
+
+    // For the 10th frame, ensure no ball exceeds 10 pins and handle spare rule
+    if (frameIndex == 9) {
+      if (firstBall > 10 || secondBall > 10 || thridBall > 10) {
+        errorMessage =
+            'Each ball in the 10th frame can only have up to 10 pins.';
+        scoreControllers[frameIndex][0].clear(); // Clear the first ball input
+        scoreControllers[frameIndex][1].clear(); // Clear the second ball input
+      } else if (firstBall + secondBall == 10 && secondBall > 10 - firstBall) {
+        errorMessage =
+            'The second ball in the 10th frame cannot exceed ${10 - firstBall} pins when the total is 10.';
+        scoreControllers[frameIndex][1].clear(); // Clear the second ball input
+      } else {
+        errorMessage = ''; // Reset error message if input is valid
+      }
+    } else {
+      // Ensure the total of the first and second ball does not exceed 10
+      if (firstBall + secondBall > 10) {
+        errorMessage = 'The total of both balls in a frame cannot exceed 10.';
+        scoreControllers[frameIndex][0].clear(); // Clear the first ball input
+        scoreControllers[frameIndex][1].clear(); // Clear the second ball input
+      } else {
+        errorMessage = ''; // Reset error message if input is valid
+      }
+    }
+  }
 }
 
 // --- Controller ---
@@ -113,6 +156,7 @@ class BowlingScoreController {
 
   void ballInputChanged(int frameIndex) {
     model.calculateScores();
+    model.checkFrameTotal(frameIndex);
     updateUI();
   }
 
@@ -256,6 +300,11 @@ class _BowlingScoreViewState extends State<BowlingScoreView> {
               Text(
                 "Total Score: ${model.totalScore}",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 20),
+              Text(
+                model.errorMessage,
+                style: TextStyle(color: Colors.red, fontSize: 16),
               ),
               SizedBox(height: 20),
               ElevatedButton.icon(
