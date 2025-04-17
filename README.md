@@ -1,13 +1,18 @@
+
 ```mermaid
 classDiagram
-  class BowlingScoreModel {
-    List<List<TextEditingController>> scoreControllers
-    List<int> scores
-    void calculateScores()
-    void resetGame()
-    int get totalScore()
-    int _getRoll(int frame, int roll)
-    int _strikeBonus(int frame)
-    bool enableSecondBall(int frameIndex)
-    bool tenthFrameThirdBall()
-  }
+    class BowlingScoreModel {
+        +List<List<TextEditingController>> scoreControllers
+        +List<int> scores
+        +String errorMessage
+        +calculateScores()
+        +loadScoresFromAsset()
+        +resetGame()
+        +int totalScore
+        +_getRoll(frame: int, roll: int) int
+        +_strikeBonus(frame: int) int
+        +enableSecondBall(frame: int) bool
+        +tenthFrameThirdBall() bool
+        +checkFrameTotal(frame: int)
+    }
+
