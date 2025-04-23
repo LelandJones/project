@@ -42,15 +42,14 @@ class BowlingScoreModel {
     final String jsonString = await rootBundle.loadString(
       'assets/bowling_data.json',
     );
-    final List<dynamic> jsonData = json.decode(jsonString);
+    final Map<String, dynamic> jsonMap = json.decode(jsonString);
 
-    for (int i = 0; i < jsonData.length && i < scoreControllers.length; i++) {
-      for (
-        int j = 0;
-        j < jsonData[i].length && j < scoreControllers[i].length;
-        j++
-      ) {
-        scoreControllers[i][j].text = jsonData[i][j].toString();
+    final List<dynamic> frames = jsonMap['frames'];
+
+    for (int i = 0; i < frames.length && i < scoreControllers.length; i++) {
+      List<dynamic> rolls = frames[i]['rolls'];
+      for (int j = 0; j < rolls.length && j < scoreControllers[i].length; j++) {
+        scoreControllers[i][j].text = rolls[j].toString();
       }
     }
 
