@@ -1,3 +1,8 @@
+# CS386 Final Project
+
+## Project Introduction
+
+## Design and Architecture
 
 ```mermaid
 classDiagram
@@ -15,4 +20,12 @@ classDiagram
         +tenthFrameThirdBall() bool
         +checkFrameTotal(frame: int)
     }
+```
+
+## Instructiones
+
+## Challenges, Role of AI, Insights
+
+## Next Steps
+
 
