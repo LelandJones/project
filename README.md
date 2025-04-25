@@ -11,6 +11,18 @@ Here is the class diagram for the project:
 
 ```mermaid
 classDiagram
+    class BowlingScoreController {
+        +BowlingScoreModel model
+        +VoidCallback updateUI
+        +ballInputChanged(frameIndex: int)
+        +resetPressed()
+        +loadScores()
+    }
+
+    class FinalProject {
+        +build(context: BuildContext)
+    }
+
     class BowlingScoreModel {
         +List<List<TextEditingController>> scoreControllers
         +List<int> scores
@@ -19,12 +31,20 @@ classDiagram
         +loadScoresFromAsset()
         +resetGame()
         +int totalScore
-        +_getRoll(frame: int, roll: int) int
-        +_strikeBonus(frame: int) int
-        +enableSecondBall(frame: int) bool
-        +tenthFrameThirdBall() bool
+        +int _getRoll(frame: int, roll: int)
+        +int _strikeBonus(frame: int)
+        +bool enableSecondBall(frame: int)
+        +bool tenthFrameThirdBall()
         +checkFrameTotal(frame: int)
     }
+
+    class BowlingScoreView {
+        +build(context: BuildContext)
+        +_buildFrameRow(start: int, end: int)
+        +_buildTextField(controller: TextEditingController, hint: String, frameIndex: int, enabled: bool)
+    }
+
+
 ```
 
 ## Instructiones
