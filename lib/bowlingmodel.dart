@@ -83,9 +83,11 @@ class BowlingScoreModel {
   // It returns 0 if the frame or roll is out of bounds or if the value is not a valid integer
   int _getRoll(int frame, int roll) {
     if (frame >= scoreControllers.length ||
-        roll >= scoreControllers[frame].length)
+        roll >= scoreControllers[frame].length) {
       return 0;
-    return int.tryParse(scoreControllers[frame][roll].text) ?? 0;
+    }
+    final value = int.tryParse(scoreControllers[frame][roll].text) ?? 0;
+    return value < 0 ? 0 : value;
   }
 
   // _strikeBonus calculates the bonus score for a strike in the current frame
