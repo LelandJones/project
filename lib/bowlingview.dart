@@ -1,8 +1,12 @@
 // view.dart
+// 4/29/2025
+// Leland Jones
+// This is the view file for the bowling score calculator app.
+// It contains the UI for displaying the scorecard and handling user input.
 
 import 'package:flutter/material.dart';
-import 'controller.dart';
-import 'model.dart';
+import 'bowlingcontroller.dart';
+import 'bowlingmodel.dart';
 
 class BowlingScoreView extends StatefulWidget {
   @override
@@ -23,25 +27,31 @@ class _BowlingScoreViewState extends State<BowlingScoreView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // AppBar with title and background color
       appBar: AppBar(
         title: Text('🎳 Bowling Scorecard'),
         centerTitle: true,
         backgroundColor: Colors.orange,
       ),
+      // Body of the app with a centered column of widgets
+      // The column contains the score frames, total score, error message, and buttons
       body: Center(
         child: SingleChildScrollView(
           child: Column(
             children: [
-              _buildFrameRow(0, 5),
-              _buildFrameRow(5, 10),
+              _buildFrameRow(0, 5), // First 5 frames
+              _buildFrameRow(5, 10), // Last 5 frames
               SizedBox(height: 20),
               Divider(thickness: 2),
               Text(
                 "Total Score: ${model.totalScore}",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
+              ), // Display total score
               SizedBox(height: 10),
-              Text(model.errorMessage, style: TextStyle(color: Colors.red)),
+              Text(
+                model.errorMessage,
+                style: TextStyle(color: Colors.red),
+              ), // Display error message if any
               SizedBox(height: 20),
               ElevatedButton.icon(
                 onPressed: controller.resetPressed,
@@ -51,12 +61,12 @@ class _BowlingScoreViewState extends State<BowlingScoreView> {
                   backgroundColor: Colors.redAccent,
                   foregroundColor: Colors.white,
                 ),
-              ),
+              ), // Reset button to clear the scores
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: controller.loadScores,
                 child: Text("Load Scores from Assets"),
-              ),
+              ), // Load scores button to load from JSON file
             ],
           ),
         ),
@@ -64,7 +74,11 @@ class _BowlingScoreViewState extends State<BowlingScoreView> {
     );
   }
 
-  Widget _buildFrameRow(int start, int end) {
+  Widget _buildFrameRow(
+    int start,
+    int end,
+  ) // Builds a row of frames for the scorecard
+  {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(end - start, (i) {
@@ -83,21 +97,21 @@ class _BowlingScoreViewState extends State<BowlingScoreView> {
                   Text(
                     "Frame ${frame + 1}",
                     style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  ), // Display frame number
                   Row(
                     children: [
                       _buildTextField(
                         model.scoreControllers[frame][0],
                         "B1",
                         frame,
-                      ),
+                      ), // First ball input field
                       SizedBox(width: 4),
                       _buildTextField(
                         model.scoreControllers[frame][1],
                         "B2",
                         frame,
                         enabled: model.enableSecondBall(frame),
-                      ),
+                      ), // Second ball input field
                       if (frame == 9) SizedBox(width: 4),
                       if (frame == 9)
                         _buildTextField(
@@ -105,7 +119,7 @@ class _BowlingScoreViewState extends State<BowlingScoreView> {
                           "B3",
                           frame,
                           enabled: model.tenthFrameThirdBall(),
-                        ),
+                        ), // Third ball input field for the 10th frame
                     ],
                   ),
                 ],
@@ -122,7 +136,8 @@ class _BowlingScoreViewState extends State<BowlingScoreView> {
     String hint,
     int frameIndex, {
     bool enabled = true,
-  }) {
+  }) // Builds a text field for user input
+  {
     return SizedBox(
       width: 45,
       child: TextField(
