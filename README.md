@@ -1,7 +1,7 @@
 # CS386 Final Project
 
 ## Project Introduction
-The Bowling Scorecard app is a Flutter-based application designed to help users track their scores during a bowling game. It allows players to input their scores frame by frame, automatically calculates the total score, and handles special cases like strikes and spares. The app also provides a feature to load pre-saved scores from a JSON file. This tool is primarily intended for invested bowlers who want to keep track of their scores on their devices.
+The Bowling Scorecard app is a Flutter-based application designed to help users track their scores during a bowling game. It allows players to input their scores frame by frame, automatically calculates the total score, and handles special cases like strikes and spares. The app also provides a feature to load pre-saved scores from a JSON file. This app is primarily intended for invested bowlers who want to keep track of their scores on their devices.
 
 ## Design and Architecture
 
