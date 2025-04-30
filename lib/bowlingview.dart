@@ -29,7 +29,7 @@ class _BowlingScoreViewState extends State<BowlingScoreView> {
     return Scaffold(
       // AppBar with title and background color
       appBar: AppBar(
-        title: Text('🎳 Bowling Scorecard'),
+        title: Text('Bowling Scorecard'),
         centerTitle: true,
         backgroundColor: Colors.orange,
       ),
