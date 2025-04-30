@@ -65,7 +65,7 @@ class _BowlingScoreViewState extends State<BowlingScoreView> {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: controller.loadScores,
-                child: Text("Load Scores from Assets"),
+                child: Text("Load Saved Score"),
               ), // Load scores button to load from JSON file
             ],
           ),
